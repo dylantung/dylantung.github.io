@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="linux-basic," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Dylan's Blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="本文主要介绍sed命令的用法。">
+<meta name="keywords" content="linux-basic">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux文本文件处理(4)">
+<meta property="og:url" content="https://dylantung.github.io/2018/06/10/linux-sed/index.html">
+<meta property="og:site_name" content="Dylan&#39;s Blog">
+<meta property="og:description" content="本文主要介绍sed命令的用法。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-06-09T16:38:18.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux文本文件处理(4)">
+<meta name="twitter:description" content="本文主要介绍sed命令的用法。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://dylantung.github.io/2018/06/10/linux-sed/"/>
+
+
+
+
+
+  <title>Linux文本文件处理(4) | Dylan's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Dylan's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://dylantung.github.io/2018/06/10/linux-sed/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Dongsx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dylan's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Linux文本文件处理(4)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-10T00:14:00+08:00">
+                2018-06-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux-basic/" itemprop="url" rel="index">
+                    <span itemprop="name">linux-basic</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/06/10/linux-sed/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2018/06/10/linux-sed/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文主要介绍sed命令的用法。<br><a id="more"></a></p>
+<h4 id="1-awk简介"><a href="#1-awk简介" class="headerlink" title="1. awk简介"></a>1. awk简介</h4><p>Sed：Stream Editor  流式编辑器 又称行编辑器，每次只编辑一行。</p>
+<h4 id="2-基本用法"><a href="#2-基本用法" class="headerlink" title="2. 基本用法"></a>2. 基本用法</h4><figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="section"># sed [OPTION]... &#123;script-only-if-no-other-script&#125; [input-file]...</span></span><br></pre></td></tr></table></figure>
+<p>选项与参数：<br>-n：只显示sed匹配到的行。其余行不显示。<br>-i：可以直接操作原文件。默认情况下sed不会改变原文件，但是-i选项可以修改原文件，此选项应慎用。<br>-r：可以使用标准正则表达式。默认情况下sed只支持基本正则表达式，但是加上-r选项后则支持扩展正则表达式<br>-e：可以同时执行多个命令<br>常用格式：<br>(1)Sed [options] ‘script’ input_file……<br>(2)Sed [options] -f script_file input_file……<br>(3)Sed [options] ‘ADDR1,ADDR2command’ input_file……<br>(4)Sed [options] ‘/PATTERN/command’ input_file……<br>(5)Sed ‘/PATTERN1/,/PATTERN2/command’ input_file……</p>
+<p>常用命令(command)如下：</p>
+<ul>
+<li>打印p</li>
+</ul>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="section"># sed -n '3p' /etc/passwd						--打印第3行</span></span><br><span class="line"><span class="section"># sed -n '1,3p' /etc/passwd						--打印第1到第3行</span></span><br><span class="line"><span class="section"># sed -n '1,$p' /etc/passwd</span></span><br><span class="line"><span class="section"># nl /etc/passwd | sed -n '5,7p'				--打印第5到第7行</span></span><br><span class="line"><span class="section"># head  -5 /etc/passwd |sed -ne '1p;4p'			--打印第1行和第4行</span></span><br><span class="line"></span><br><span class="line"><span class="section"># nl /etc/passwd | sed -n '/root/p'				--查找包含root的行</span></span><br><span class="line"><span class="section"># cat /etc/passwd | sed -n '/^root/p'</span></span><br><span class="line"></span><br><span class="line"><span class="section"># ifconfig eth1 | sed -n '2p' | awk -F: '&#123;print $2&#125;' | awk '&#123;print $1&#125;'		--截取ip</span></span><br><span class="line"></span><br><span class="line"><span class="section"># head  -5 /etc/passwd |sed -ne '/^[[:upper:]]/p;/^[a-z]/p'			--分别打印大写字母开头的行和小写字母开头的行</span></span><br><span class="line"><span class="section"># head  -5 /etc/passwd |sed -ne '/^[[:upper:]]/,/^[a-z]/p' 			--用正则表达式实现范围打印</span></span><br><span class="line"><span class="section"># head  -5 /etc/passwd |sed -ne '/^[[:upper:]]/,/nologin$/p'</span></span><br><span class="line"><span class="section"># head -5 /etc/passwd |sed -n '/^[^[:blank:]]/p' 					--打印非空格开头的行</span></span><br><span class="line"></span><br><span class="line">下面三条都是把有Accepted关键字的行打印出来</span><br><span class="line"><span class="section"># awk '$0~"Accepted" &#123;print $0&#125;' /var/log/ssh.log </span></span><br><span class="line"><span class="section"># sed -n '/Accepted/p' /var/log/ssh.log  </span></span><br><span class="line"><span class="section"># cat /var/log/ssh.log  | grep Accepted</span></span><br><span class="line"></span><br><span class="line">比较awk</span><br><span class="line"><span class="section"># head -5 /etc/passwd |cat -n | sed -n '1,4p'</span></span><br><span class="line"><span class="section"># head -5 /etc/passwd |cat -n | awk 'NR&lt;5 &#123;print $0&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="section"># head -5 /etc/passwd |cat -n | sed -n '1p;3p;5p'</span></span><br><span class="line"><span class="section"># head -5 /etc/passwd |cat -n | awk 'NR==1 || NR==3 || NR==5 &#123;print $0&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="section"># head -5 /etc/passwd |cat -n | sed -n '/root/p;/daemon/p;/lp/p'</span></span><br><span class="line"><span class="section"># head -5 /etc/passwd |cat -n | awk '$0~"root" || $0~"daemon" || $0~"lp" &#123;print $0&#125;'</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>删除e<br>sed删除语法：<br>sed ‘范围d’ file<br>以行为单位删除，如果不指定范围，默认范围是整个文件。</li>
+</ul>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="section"># sed '1d' /etc/passwd 								删除第一行，第二行2d，第三行3d，以此类推，最后一行$d</span></span><br><span class="line"><span class="section"># sed '1,3d' /etc/passwd 							删除第1行到第3行，中间是逗号</span></span><br><span class="line"><span class="section"># sed '1d;3d' /etc/passwd							删除第1行和第3行，中间是分号</span></span><br><span class="line"><span class="section"># sed -e '1d' -e '3d' /etc/passwd					 删除第1行和第3行</span></span><br><span class="line"><span class="section"># sed --expression='1d' --expression='3d' /etc/passwd</span></span><br><span class="line"><span class="section"># sed '/^root/d' /etc/passwd						使用正则表达式，要加双斜杠</span></span><br><span class="line"><span class="section"># sed '/root/,/sync/d' /etc/passwd					 删除包含root到sync的行</span></span><br><span class="line"><span class="section"># sed '/root/!d' /etc/passwd						!表示后面的命令对所有没有被选定的行发生作用</span></span><br><span class="line"><span class="code">	</span></span><br><span class="line"><span class="section"># head -n 5 /etc/passwd |cat -n |sed  '2d'			  指定删除第二行</span></span><br><span class="line"><span class="section"># head -n 5 /etc/passwd |cat -n |sed  '2,3d'  		  删除第二行到第三行，中间为逗号，表示范围</span></span><br><span class="line"><span class="section"># head -n 5 /etc/passwd |cat -n |sed  '1d;5d' 		  删除第一行和第五行，中间为分号，表示单独操作</span></span><br><span class="line"><span class="section"># head -n 5 /etc/passwd |cat -n |sed  '1d;5d;3d'</span></span><br><span class="line"><span class="section"># head -n 5 /etc/passwd |cat -n |sed  '1,3d;5d'</span></span><br><span class="line"><span class="section"># head -5 /etc/passwd |sed '/daemon/d'</span></span><br><span class="line"></span><br><span class="line">删除vsftpd.conf里所有的注释和空行</span><br><span class="line"><span class="section"># sed '/^#/d;/^$/d' /etc/vsftpd/vsftpd.conf</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>替换<br>sed替换语法：<br>sed ‘范围 s/老字符/新字符/标记’ file<br>sed ‘范围 s#老字符#新字符#标记’ file<br>如果不指定范围，默认范围是整个文件。<br>sed ‘y/老字符/新字符/‘</li>
+</ul>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="section"># head -5 /etc/passwd | nl |sed '1,4s/nologin/NOLOGIN/g'</span></span><br><span class="line"><span class="section"># sed 's#nologin#NOLOGIN#g' /etc/passwd			g是标记，表示全部，也可以使用数字，1,2,3等进行替换，#号只有替换的时候才能用</span></span><br><span class="line"><span class="section"># sed 's/nologin/NOLOGIN/g' /etc/passwd</span></span><br><span class="line"><span class="section"># sed '1s/root/--&amp;--/2' /etc/passwd				老字符支持正则表达式，新字符不支持正则表达式，除了"\n\&amp;"，这里的"&amp;"表示前面的关键字</span></span><br><span class="line"><span class="section"># sed '1&#123;s/root/ROOT/;s/bin/BIN/&#125;' /etc/passwd	  多次替换使用花括号和分号</span></span><br><span class="line"><span class="section"># sed 'y/abc/xyz/' file						     y也是替换，a-&gt;x b-&gt;y c-&gt;z</span></span><br><span class="line"><span class="section"># cat /etc/sysconfig/network-scripts/ifcfg-eth0 | sed '/^onboot/c\onboot=yes'		将onboot开头的行替换成onboot=yes，行替换</span></span><br><span class="line"><span class="section"># cat /etc/sysconfig/network-scripts/ifcfg-eth0 | sed 's/ONBOOT="no"/ONBOOT="yes"/'</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>修改之后保存</li>
+</ul>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="section"># sed -i '/^root/a\the first line' file		--修改源文件的操作要谨慎</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/linux-basic/" rel="tag"># linux-basic</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/09/linux-awk/" rel="next" title="Linux文本文件处理(3)">
+                <i class="fa fa-chevron-left"></i> Linux文本文件处理(3)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/10/linux-process/" rel="prev" title="Linux进程管理">
+                Linux进程管理 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Dongsx</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-awk简介"><span class="nav-number">1.</span> <span class="nav-text">1. awk简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-基本用法"><span class="nav-number">2.</span> <span class="nav-text">2. 基本用法</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dongsx</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            id: window.location.pathname, 
+            owner: 'dsxlinux',
+            repo: 'dsxlinux.github.io',
+            
+            lang: "zh-Hans" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: '9a33b0fa2895f43decd6b08d221ae39ee9fb96c7',
+            
+                client_id: 'c8b2f1b20439b6d4f32d'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
